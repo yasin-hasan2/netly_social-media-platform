@@ -11,7 +11,7 @@ import cloudinary from "../lib/cloudinary.js";
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    console.log(username, email, password);
+    // console.log(username, email, password);
 
     // Validate input
     if (!username || !email || !password) {
@@ -32,7 +32,7 @@ export const registerUser = async (req, res) => {
 
     // Create new user
     const hashedPassword = await bcrypt.hash(password, 10); // In a real application, you should hash the password before saving
-    console.log("Hashed Password:", hashedPassword);
+    // console.log("Hashed Password:", hashedPassword);
     await User.create({
       username,
       email,
@@ -59,7 +59,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     // Debug: Print incoming data
-    console.log("🧪 Incoming login data:", { email, password });
+    // console.log("🧪 Incoming login data:", { email, password });
 
     // Validate input
     if (!email || !password) {
@@ -81,8 +81,8 @@ export const login = async (req, res) => {
     }
 
     // Debug: Show found user data
-    console.log("🧪 User found:", user);
-    console.log("🧪 User password hash:", user.password);
+    // console.log("🧪 User found:", user);
+    // console.log("🧪 User password hash:", user.password);
 
     // Check if password field is present
     if (!user.password) {
@@ -107,7 +107,7 @@ export const login = async (req, res) => {
       expiresIn: "6d",
     });
 
-    console.log("🧪 JWT Token generated:", token);
+    // console.log("🧪 JWT Token generated:", token);
 
     // populate each post if in the posts array
     const populatedPosts = await Promise.all(

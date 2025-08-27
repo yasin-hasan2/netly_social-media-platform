@@ -8,7 +8,7 @@ export const sendMessage = async (req, res) => {
     const receiverId = req.params.id;
     const { textMessage: message } = req.body;
 
-    console.log("✅ Message:", message);
+    // console.log("✅ Message:", message);
 
     // ✅ Fix variable name conflict
     let conversation = await Conversation.findOne({

@@ -11,9 +11,9 @@ export const addNewPost = async (req, res) => {
     const image = req.file;
     const authorId = req.user._id; // Assuming the user ID is stored in req.id by authentication middleware
 
-    console.log("Author ID:", authorId); // Log the author ID for debugging
-    console.log("Caption:", caption); // Log the caption for debugging
-    console.log("Image:", image); // Log the image file for debugging
+    // console.log("Author ID:", authorId); // Log the author ID for debugging
+    // console.log("Caption:", caption); // Log the caption for debugging
+    // console.log("Image:", image); // Log the image file for debugging
 
     // Validate input
     if (!image) {
@@ -80,11 +80,11 @@ export const getAllPosts = async (req, res) => {
       posts: post, // Return the fetched posts
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,
     });
-    console.log(error);
   }
 };
 
@@ -118,11 +118,11 @@ export const getUserPost = async (req, res) => {
       posts, // Return the user's posts
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,
     });
-    console.log(error);
   }
 };
 
@@ -288,9 +288,9 @@ export const deletePost = async (req, res) => {
     const userId = req.id; // Get the user ID from the request object (assuming
 
     const post = await Post.findById(postId); // Find the post by ID
-    console.log("Post to be deleted:", post); // Log the post for debugging
-    console.log("Post ID:", postId); // Log the post for debugging
-    console.log("User Id:", userId); // Log the post for debugging
+    // console.log("Post to be deleted:", post); // Log the post for debugging
+    // console.log("Post ID:", postId); // Log the post for debugging
+    // console.log("User Id:", userId); // Log the post for debugging
 
     if (!post) {
       return res.status(404).json({
