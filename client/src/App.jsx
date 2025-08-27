@@ -81,7 +81,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      const socket = io("http://localhost:8001", {
+      const socket = io("https://netly-social-media-platform-1.onrender.com", {
         query: { userId: user?._id },
         transports: ["websocket"],
       });
