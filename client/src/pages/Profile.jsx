@@ -3,201 +3,227 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useGetUserProfile from "@/hooks/useGetUserProfile";
 import { AtSign, Heart, MessageCircle } from "lucide-react";
-
 import { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Profile() {
   const params = useParams();
   const userId = params.id;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   useGetUserProfile(userId);
-  // console.log("userId from params", userId);
 
   const [activeTab, setActiveTab] = useState("posts");
+  const [isFollowing, setIsFollowing] = useState(false); // toggle for demo
 
   const { userProfile, user } = useSelector((store) => store.auth);
-  console.log("userProfile", userProfile);
 
   const isLoggedInUserProfile = user?._id === userProfile?._id;
-  const isFollowing = false;
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
+  // Determine displayed content based on active tab
+  let displayedContent = [];
+  switch (activeTab) {
+    case "posts":
+      displayedContent = userProfile?.posts || [];
+      break;
+    case "saved":
+      displayedContent = userProfile?.bookmarks || [];
+      break;
+    case "reels":
+      displayedContent = userProfile?.reels || [];
+      break;
+    case "tags":
+      displayedContent = userProfile?.tags || [];
+      break;
+    default:
+      displayedContent = [];
+  }
+
   const displayedPost =
     activeTab === "posts" ? userProfile?.posts : userProfile?.bookmarks;
 
+  // Dummy follow/unfollow handler
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    toast.success(isFollowing ? "Unfollowed" : "Followed");
+  };
+
+  // Navigate to message page
+  const handleMessage = () => {
+    navigate(`/chat/${userProfile?._id}`);
+  };
+
+  // Convert to Masonry format
+  // const masonryItems = displayedContent.map((item) => ({
+  //   id: item._id,
+  //   img: item.image,
+  //   height: 300,
+  //   url: `/post/${item._id}`,
+  // }));
+
   return (
-    <div className="flex max-w-5xl justify-center mx-auto pl-10 mt-5">
-      <div className="flex flex-col gap-28 p-8">
-        <div className="grid grid-cols-2">
-          <section className="flex items-center justify-center">
-            <Avatar className={"h-32 w-32 border-amber-400 border-2"}>
+    <div className="flex justify-center mt-8 px-4 lg:px-0 ">
+      <div className="flex flex-col gap-12 max-w-5xl w-full">
+        {/* Profile Header */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+          {/* Avatar */}
+          <section className="flex justify-center">
+            <Avatar className="h-36 w-36 border-4 border-[#FACE25] rounded-full">
               <AvatarImage
                 src={userProfile?.profilePicture}
-                alt="profilePhoto"
-                className={"  object-cover h-32 w-32 "}
+                alt="Profile Photo"
+                className="object-cover h-36 w-36 rounded-full"
               />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </section>
+
+          {/* User Info */}
           <section>
-            <div className="flex flex-col gap-5">
-              <div className="flex items-center gap-2">
-                <span> {userProfile?.username} </span>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl font-bold text-white">
+                  {userProfile?.username}
+                </h1>
+
+                {/* Action Buttons */}
                 {isLoggedInUserProfile ? (
-                  <div className="space-x-2">
+                  <div className="flex gap-2 flex-wrap">
                     <Link to={`/account/edit`}>
                       <Button
-                        variant={"secondary"}
-                        className={"hover:bg-gray-200 h-8"}
+                        variant="secondary"
+                        className="h-9 hover:bg-gray-200 transition"
                       >
                         Edit Profile
                       </Button>
                     </Link>
                     <Button
-                      variant={"secondary"}
-                      className={"hover:bg-gray-200 h-8"}
+                      variant="secondary"
+                      className="h-9 hover:bg-gray-200"
                     >
-                      View archive
+                      View Archive
                     </Button>
                     <Button
-                      variant={"secondary"}
-                      className={"hover:bg-gray-200 h-8"}
+                      variant="secondary"
+                      className="h-9 hover:bg-gray-200"
                     >
-                      Ad tools
-                    </Button>
-                  </div>
-                ) : isFollowing ? (
-                  <div>
-                    <Button variant={"secondary"} className={" h-8"}>
-                      UnFollow
-                    </Button>
-                    <Button variant={"secondary"} className={" h-8"}>
-                      Message
+                      Ad Tools
                     </Button>
                   </div>
                 ) : (
-                  <Button className={"bg-[#FBCF28] hover:bg-[#d5be6b] h-8"}>
-                    Follow
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleFollow}
+                      className={`h-9 ${
+                        isFollowing
+                          ? "bg-gray-600 hover:bg-gray-500"
+                          : "bg-[#FACE25] hover:bg-[#d5be6b]"
+                      }`}
+                    >
+                      {isFollowing ? "Unfollow" : "Follow"}
+                    </Button>
+                    <Button
+                      onClick={handleMessage}
+                      className="h-9 bg-white/20 hover:bg-white/30"
+                    >
+                      Message
+                    </Button>
+                  </div>
                 )}
               </div>
-              <div className="flex items-center gap-4">
+
+              {/* Stats */}
+              <div className="flex items-center gap-6 text-gray-300">
                 <p>
-                  {" "}
-                  <span className="font-semibold">
+                  <span className="font-semibold text-white">
                     {userProfile?.posts.length}
                   </span>{" "}
                   posts
                 </p>
                 <p>
-                  {" "}
-                  <span className="font-semibold">
+                  <span className="font-semibold text-white">
                     {userProfile?.followers.length}
                   </span>{" "}
                   followers
                 </p>
                 <p>
-                  {" "}
-                  <span className="font-semibold">
+                  <span className="font-semibold text-white">
                     {userProfile?.following.length}
                   </span>{" "}
                   following
                 </p>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold">
-                  {" "}
-                  {userProfile?.bio || "bio here ..."}{" "}
+
+              {/* Bio & Info */}
+              <div className="flex flex-col gap-2 text-gray-300">
+                <span className="text-white font-semibold">
+                  {userProfile?.bio || "Bio here ..."}
                 </span>
-                <Badge className={"w-fit"} variant={"secondary"}>
-                  <AtSign /> {userProfile?.username}{" "}
+                <Badge className="w-fit bg-white/10 text-white">
+                  <AtSign /> {userProfile?.username}
                 </Badge>
                 <span className="flex items-center gap-2">
-                  {" "}
-                  <FaEnvelope /> {userProfile?.email}{" "}
+                  <FaEnvelope /> {userProfile?.email}
                 </span>
                 <span>
-                  {" "}
-                  {userProfile?.gender === "male" ? "He/Him" : "She/Her"}{" "}
+                  {userProfile?.gender === "male" ? "He/Him" : "She/Her"}
                 </span>
-
-                {userProfile?.gender === "male" ? (
-                  <span className="flex items-center gap-2">
-                    {" "}
-                    {userProfile?.gender}{" "}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    {" "}
-                    {userProfile?.gender}{" "}
-                  </span>
-                )}
-                <span>{userProfile?.relationshipStatus} </span>
+                <span>{userProfile?.relationshipStatus}</span>
               </div>
             </div>
           </section>
         </div>
-        <div className="border-t border-t-gray-200">
-          <div className="flex items-center justify-center gap-10 text-sm">
-            <span
-              onClick={() => handleTabChange("posts")}
-              className={`py-3 cursor-pointer ${
-                activeTab === "posts" ? "font-bold" : ""
-              }`}
-            >
-              POSTS
-            </span>
-            <span
-              onClick={() => handleTabChange("saved")}
-              className={`py-3 cursor-pointer ${
-                activeTab === "saved" ? "font-bold" : ""
-              }`}
-            >
-              SAVED
-            </span>
-            <span className="py-3 cursor-pointer">REELS</span>
-            <span className="py-3 cursor-pointer">TAGS</span>
+
+        {/* Tabs */}
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-center gap-10 border-b border-gray-600 text-gray-300">
+            {["posts", "saved", "reels", "tags"].map((tab) => (
+              <span
+                key={tab}
+                onClick={() => handleTabChange(tab)}
+                className={`py-3 cursor-pointer uppercase tracking-wider font-semibold transition-colors ${
+                  activeTab === tab
+                    ? "text-[#FACE25] border-b-2 border-[#FACE25]"
+                    : "hover:text-white"
+                }`}
+              >
+                {tab}
+              </span>
+            ))}
           </div>
-          <div className="grid grid-cols-3 gap-1">
-            {displayedPost?.map((post) => {
-              return (
-                <div key={post?._id} className="relative group cursor-pointer">
-                  <img
-                    src={post?.image}
-                    alt="postImage"
-                    className="rounded-sm my-2 w-full aspect-square object-cover"
-                  />
-                  <div className=" absolute inset-0 flex items-center justify-center bg-transparent bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="flex items-center text-white space-x-4">
-                      <button
-                        className={
-                          "flex items-center gap-2 hover:text-gray-300"
-                        }
-                      >
-                        {" "}
-                        <Heart /> <span> {post?.likes.length} </span>{" "}
-                      </button>
-                      <button
-                        className={
-                          "flex items-center gap-2 hover:text-gray-300"
-                        }
-                      >
-                        {" "}
-                        <MessageCircle /> <span>
-                          {" "}
-                          {post?.comments.length}{" "}
-                        </span>{" "}
-                      </button>
-                    </div>
+
+          {/* Posts Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {displayedPost?.map((post) => (
+              <div
+                key={post?._id}
+                className="relative group overflow-hidden rounded-lg"
+              >
+                <img
+                  src={post?.image}
+                  alt="Post Image"
+                  className="w-full aspect-square object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="flex items-center gap-4 text-white text-sm pointer-events-auto">
+                    <button className="flex items-center gap-1 hover:text-[#FACE25]">
+                      <Heart /> {post?.likes.length}
+                    </button>
+                    <button className="flex items-center gap-1 hover:text-[#FACE25]">
+                      <MessageCircle /> {post?.comments.length}
+                    </button>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

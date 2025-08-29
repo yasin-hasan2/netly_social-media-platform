@@ -118,3 +118,52 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Scrollbar width and track */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* light transparent */
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #face25; /* main brand color */
+  border-radius: 10px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Thumb hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background: #ffd83d; /* slightly lighter yellow */
+  transform: scale(1.1);
+}
+
+/* Optional: Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #face25 rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: linear-gradient(45deg, #face25, #ffd83d, #face25);
+  background-size: 200% 200%;
+  animation: scrollbarAnim 2s linear infinite;
+}
+
+@keyframes scrollbarAnim {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

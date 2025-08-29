@@ -16,22 +16,20 @@ export default function CreatePost({ open, setOpen }) {
   const [caption, setCaption] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(false);
+
   const { user } = useSelector((store) => store.auth);
   const { posts } = useSelector((store) => store.post);
   const dispatch = useDispatch();
 
   const fileChangeHandler = async (e) => {
     const file = e.target.files?.[0];
-    console.log("file", file);
-
     if (file) {
       setFile(file);
       try {
         const dataUrl = await readFileAsDataURL(file);
-        console.log("dataUrl", dataUrl);
         setImagePreview(dataUrl);
       } catch (err) {
-        console.error("Error reading file as data URL:", err);
+        console.error(err);
         setImagePreview("");
       }
     }
@@ -39,64 +37,86 @@ export default function CreatePost({ open, setOpen }) {
 
   const createPostHandler = async (e) => {
     e.preventDefault();
-    console.log("Creating post with caption:", caption, "and file:", file);
+    if (!caption && !imagePreview) {
+      toast.error("Please add a caption or select an image!");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("caption", caption);
     if (imagePreview) formData.append("image", file);
+
     try {
       setLoading(true);
       const res = await axiosInstance.post("/post/addpost", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
       if (res.data.success) {
-        dispatch(setPosts([res.data.post, ...posts])); // [1] -> [1,2] -> total element = 2
+        dispatch(setPosts([res.data.post, ...posts]));
         toast.success(res.data.message);
         setOpen(false);
         setCaption("");
         setFile("");
+        setImagePreview("");
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <Dialog open={open}>
-        <DialogContent onInteractOutside={() => setOpen(false)}>
-          <DialogHeader className="text-center font-semibold">
-            Create New Post
-          </DialogHeader>
-          <div className="flex gap-3 items-center">
-            <Avatar>
-              <AvatarImage src={user?.profilePicture} alt="img" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="font-semibold text-xs">{user?.username}</h1>
-              <span className="text-gray-600 text-xs">Bio here...</span>
-            </div>
+    <Dialog open={open}>
+      <DialogContent
+        onInteractOutside={() => setOpen(false)}
+        className="max-w-md w-full p-6 rounded-xl bg-gray-900 text-white shadow-lg"
+      >
+        <DialogHeader className="text-center font-bold text-xl text-[#FACE25]">
+          Create New Post
+        </DialogHeader>
+
+        {/* User Info */}
+        <div className="flex items-center gap-3 my-4">
+          <Avatar className="h-12 w-12 border-2 border-[#FACE25]">
+            <AvatarImage src={user?.profilePicture} alt="user" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="font-semibold text-white">{user?.username}</h1>
+            <p className="text-gray-400 text-sm">Share your moments...</p>
           </div>
-          <Textarea
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            className="focus-visible:ring-transparent border-none"
-            placeholder="Write a caption..."
-          />
-          {imagePreview && (
-            <div className="w-full h-64 flex items-center justify-center">
-              <img
-                src={imagePreview}
-                alt="preview_img"
-                className="object-cover h-full w-full rounded-md"
-              />
-            </div>
-          )}
+        </div>
+
+        {/* Caption Input */}
+        <Textarea
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          placeholder="Write a caption..."
+          className="w-full mb-4 resize-none border-none rounded-md bg-gray-800 text-white placeholder-gray-400 focus:ring-1 focus:ring-[#FACE25]"
+          rows={3}
+        />
+
+        {/* Image Preview */}
+        {imagePreview && (
+          <div className="w-full h-64 rounded-lg overflow-hidden mb-4 border border-gray-700 relative">
+            <img
+              src={imagePreview}
+              alt="preview"
+              className="object-cover w-full h-full"
+            />
+          </div>
+        )}
+
+        {/* Buttons */}
+        <div className="flex flex-col gap-3">
+          <Button
+            onClick={() => imageRef.current.click()}
+            className="w-full bg-[#0095F6] hover:bg-[#258bcf] transition"
+          >
+            Select from Computer
+          </Button>
           <input
             ref={imageRef}
             type="file"
@@ -104,29 +124,18 @@ export default function CreatePost({ open, setOpen }) {
             className="hidden"
             onChange={fileChangeHandler}
           />
-          <Button
-            onClick={() => imageRef.current.click()}
-            className="w-fit mx-auto bg-[#0095F6] hover:bg-[#258bcf] "
-          >
-            Select from computer
-          </Button>
-          {imagePreview &&
-            (loading ? (
-              <Button>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
-              </Button>
-            ) : (
-              <Button
-                onClick={createPostHandler}
-                type="submit"
-                className="w-full"
-              >
-                Post
-              </Button>
-            ))}
-        </DialogContent>
-      </Dialog>
-    </div>
+          {imagePreview && (
+            <Button
+              onClick={createPostHandler}
+              className="w-full bg-[#FACE25] hover:bg-[#d5be6b] transition flex justify-center items-center"
+              disabled={loading}
+            >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Post
+            </Button>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

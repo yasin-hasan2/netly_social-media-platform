@@ -4,6 +4,7 @@ import postSlice from "./postSlice.js";
 import chatSlice from "./chatSlice.js";
 import socketSlice from "./socketSlice.js";
 import rtnSlice from "./rtnSlice.js";
+import searchReducer from "./searchSlice.js";
 // import fufSlice from "./fufSlice.js"; // ✅ newly added
 
 import {
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   socketIo: socketSlice,
   chat: chatSlice,
   realTimeNotification: rtnSlice,
+  search: searchReducer,
   // followUnfollow: fufSlice, // ✅ newly added
 });
 
