@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider defaultTheme="system" storageKey="linkly-ui-theme">
+        <ThemeProvider defaultTheme="dark" storageKey="linkly-ui-theme">
           <App />
           <Toaster />
         </ThemeProvider>
@@ -23,3 +23,9 @@ createRoot(document.getElementById("root")).render(
     </Provider>
   </StrictMode>
 );
+
+// If you want to add theme system on your website just uncomment it and use it
+
+// import { ThemeProvider } from "./components/theme-provider";
+//  <ThemeProvider defaultTheme="system" storageKey="linkly-ui-theme">
+//  </ThemeProvider>
