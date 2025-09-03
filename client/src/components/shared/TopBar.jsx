@@ -1,16 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { FiSearch, FiX, FiBell } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import NotificationDialog from "./NotificationDialog";
+import { Link } from "react-router-dom";
 
 export default function TopBar({ onSearchResults }) {
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [results, setResults] = useState([]);
+  const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
 
   const { users } = useSelector((state) => state.auth); // all users
   const { posts } = useSelector((state) => state.post); // all posts
-
+  const { likeNotification } = useSelector(
+    (store) => store.realTimeNotification
+  );
   // Focus input when opened
   useEffect(() => {
     if (showSearch) inputRef.current?.focus();
@@ -49,9 +54,11 @@ export default function TopBar({ onSearchResults }) {
   };
 
   return (
-    <div className="w-full flex items-center justify-between px-4 py-2 backdrop-blur-md bg-white/30 shadow-lg fixed top-0 left-0 right-0 z-50">
+    <div className="w-full flex items-center justify-between px-4 py-2 backdrop-blur-md bg-transparent shadow-lg fixed top-0 left-0 right-0 z-50">
       {/* Logo */}
-      <div className="text-2xl font-extrabold text-[#FBCE26]">Linkly</div>
+      <Link to={"/"}>
+        <div className="text-2xl font-extrabold text-[#FBCE26]">Linkly</div>
+      </Link>
 
       {/* Search Section */}
       <div className="relative flex items-center">
@@ -89,11 +96,24 @@ export default function TopBar({ onSearchResults }) {
       <div className="flex items-center gap-4 text-gray-700">
         {/* Notification */}
         <button className="relative">
-          <FiBell size={20} className="text-[#FBCE26]" />
-          <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white rounded-full px-1.5">
-            3
-          </span>
+          <FiBell
+            onClick={() => {
+              setOpen(true);
+            }}
+            size={20}
+            className="text-[#FBCE26]"
+          />
+          {likeNotification?.length > 0 && (
+            <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white rounded-full px-1.5">
+              {likeNotification?.length}
+            </span>
+          )}
         </button>
+        <NotificationDialog
+          open={open}
+          setOpen={setOpen}
+          likeNotification={likeNotification}
+        />
         {/* You can add more icons here */}
       </div>
     </div>

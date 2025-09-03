@@ -47,7 +47,7 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col md:flex-row h-screen ">
       {/* Users List */}
-      <section className="w-full md:w-1/4 my-4 md:my-8 mx-2 md:mx-4 flex flex-col bg-white/10 backdrop-blur-xs rounded-2xl p-3 shadow-lg">
+      <section className="w-full md:w-1/4 my-4 md:my-8  md:mx-4 flex flex-col bg-white/10 backdrop-blur-xs rounded-2xl p-3 shadow-lg">
         <h1 className="font-bold mb-4 text-xl text-white px-2">
           {user?.username}
         </h1>

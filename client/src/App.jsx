@@ -14,6 +14,7 @@ import { setSocket } from "./redux/socketSlice";
 import { setOnlineUsers } from "./redux/chatSlice";
 import { setLikeNotification } from "./redux/rtnSlice";
 import ProtectedRoute from "./routers/ProtectedRoute";
+import FeatureAndFeedback from "./pages/FeatureAndFeedback";
 
 const browserRouter = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const browserRouter = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/FeatureAndFeedback",
+    element: <FeatureAndFeedback />,
   },
   {
     path: "/signup",

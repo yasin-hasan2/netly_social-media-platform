@@ -2,6 +2,7 @@ import express from "express";
 import {
   editProfile,
   followOrUnfollowUser,
+  getAllUsers,
   getProfile,
   getSuggestedUsers,
   login,
@@ -24,6 +25,8 @@ router.route("/suggested").get(isAuthenticated, getSuggestedUsers);
 router
   .route("/followorunfollow/:id")
   .post(isAuthenticated, followOrUnfollowUser);
+
+router.get("/allUsers", getAllUsers);
 
 router.get("/me", isAuthenticated, (req, res) => {
   res.status(200).json({ success: true, user: req.user });

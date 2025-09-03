@@ -9,13 +9,14 @@ import {
 } from "../ui/dialog";
 import { Bookmark, MessageCircle, MoreHorizontal, Send } from "lucide-react";
 import { Button } from "../ui/button";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaSmile } from "react-icons/fa";
 import CommentDialog from "./CommentDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios";
 import { setPosts, setSelectedPost } from "@/redux/postSlice";
 import { Badge } from "../ui/badge";
+import { Link } from "react-router-dom";
 
 const Post = ({ post }) => {
   const [text, setText] = useState("");
@@ -158,7 +159,9 @@ const Post = ({ post }) => {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex items-center gap-2">
-            <span className="font-medium">{post.author?.username}</span>
+            <Link to={`/profile/${post?.author?._id}`}>
+              <span className="font-medium">{post.author?.username}</span>
+            </Link>
             {user?._id === post.author?._id && (
               <Badge variant="secondary">@Author</Badge>
             )}
@@ -211,24 +214,29 @@ const Post = ({ post }) => {
       </div>
 
       {/* Post Image */}
-      <img
-        src={post.image}
-        alt="post_img"
-        className="w-full object-cover rounded-lg mb-2"
-      />
+      <div
+        className="w-full max-w-full mx-auto rounded-lg border border-yellow-600 overflow-hidden bg-black relative"
+        style={{ aspectRatio: "4 / 5" }}
+      >
+        <img
+          src={post.image}
+          alt="post_img"
+          className="w-full h-full object-contain"
+        />
+      </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between my-2">
         <div className="flex items-center gap-3">
           {liked ? (
             <FaHeart
               onClick={likeOrDislikeHandler}
-              className="text-yellow-400 cursor-pointer"
+              className="text-yellow-400 cursor-pointer text-2xl"
             />
           ) : (
             <FaRegHeart
               onClick={likeOrDislikeHandler}
-              className="hover:text-gray-500 cursor-pointer"
+              className="hover:text-gray-500 cursor-pointer text-2xl"
             />
           )}
           <MessageCircle
@@ -236,20 +244,20 @@ const Post = ({ post }) => {
               dispatch(setSelectedPost(post));
               setOpen(true);
             }}
-            className="cursor-pointer hover:text-gray-500"
+            className="cursor-pointer hover:text-gray-500 text-2xl"
           />
-          <Send className="cursor-pointer hover:text-gray-500" />
+          <Send className="cursor-pointer hover:text-gray-500 text-2xl" />
         </div>
         {Array.isArray(isBookmarked) &&
         isBookmarked.some((b) => b._id === post._id) ? (
           <Bookmark
             onClick={bookmarkHandler}
-            className="text-blue-600 cursor-pointer"
+            className="text-blue-600 cursor-pointer text-2xl"
           />
         ) : (
           <Bookmark
             onClick={bookmarkHandler}
-            className="cursor-pointer hover:text-gray-500"
+            className="cursor-pointer hover:text-gray-500 text-2xl"
           />
         )}
       </div>
@@ -294,11 +302,28 @@ const Post = ({ post }) => {
           value={text}
           onChange={changeEventHandler}
           placeholder="Add a comment..."
-          className="flex-1 border-b border-gray-400 focus:border-blue-500 focus:outline-none text-sm pb-1"
+          className="flex-1 border-b border-gray-400 focus:border-yellow-500 focus:outline-none text-sm pb-3"
         />
-        <Button onClick={commentHandler} variant="ghost">
-          Post
-        </Button>
+
+        {/* Show Post button only if input is not empty */}
+        {text.length > 0 && (
+          <Button
+            onClick={commentHandler}
+            variant="ghost"
+            className={"bg-blend-normal"}
+          >
+            Post
+          </Button>
+        )}
+
+        {/* Emoji Icon */}
+        <button
+          type="button"
+          className="text-xl  p-1 rounded-full"
+          onClick={() => console.log("Open emoji picker")}
+        >
+          <FaSmile />
+        </button>
       </div>
 
       <CommentDialog open={open} setOpen={setOpen} />

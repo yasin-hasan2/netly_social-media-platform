@@ -1,16 +1,28 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import SuggestedUsersDialog from "./SuggestedUsersDialog";
 
 const SuggestedUsers = () => {
   const { suggestedUsers } = useSelector((store) => store.auth);
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="my-10">
+      {/* Header with See All button */}
       <div className="flex items-center justify-between text-sm">
         <h1 className="font-semibold text-gray-600">Suggested for you</h1>
-        <span className="font-medium cursor-pointer">See All</span>
+        <span
+          onClick={() => setOpen(true)}
+          className="font-medium cursor-pointer text-[#3BADF8] hover:underline"
+        >
+          See All
+        </span>
       </div>
-      {suggestedUsers.map((user) => {
+
+      {/* Show only first 5 users here */}
+      {suggestedUsers.slice(0, 2).map((user) => {
         return (
           <div
             key={user._id}
@@ -51,6 +63,13 @@ const SuggestedUsers = () => {
           </div>
         );
       })}
+
+      {/* Dialog Component */}
+      <SuggestedUsersDialog
+        open={open}
+        onOpenChange={setOpen}
+        users={suggestedUsers}
+      />
     </div>
   );
 };

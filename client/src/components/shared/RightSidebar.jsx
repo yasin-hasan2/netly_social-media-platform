@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSelector } from "react-redux";
 import SuggestedUsers from "./SuggestedUsers";
+import Footer from "./Footer";
 
 export default function RightSidebar() {
   const { user } = useSelector((store) => store.auth);
@@ -30,6 +31,10 @@ export default function RightSidebar() {
       <div className="p-4 rounded-2xl backdrop-blur-lg bg-white/10 shadow-lg">
         <h2 className="text-gray-300 font-semibold mb-3">Suggested Users</h2>
         <SuggestedUsers />
+      </div>
+
+      <div>
+        <Footer />
       </div>
     </div>
   );

@@ -5,14 +5,14 @@ import useGetUserProfile from "@/hooks/useGetUserProfile";
 import { AtSign, Heart, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Profile() {
   const params = useParams();
   const userId = params.id;
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useGetUserProfile(userId);
