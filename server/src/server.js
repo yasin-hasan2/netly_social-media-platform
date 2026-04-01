@@ -1,23 +1,26 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config(); // Loads environment variables from .env file
 
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path"; // ❗ You were using path but didn’t import it
 
-import path from "path";
-
+// Routes
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import messageRoute from "./routes/message.route.js";
 
+// DB connection
 import { connectDB } from "./lib/db.js";
 
-// const app = express();  // moved to socket.js
-import { app, server } from "./socket/socket.js"; // now we use the app from socket.js
+// Using app & server from socket (for real-time features)
+import { app, server } from "./socket/socket.js";
 
-const PORT = process.env.PORT;
+// Port from environment
+const PORT = process.env.PORT || 8001;
 
+// 👉 Test route (good for checking API is alive)
 app.get("/", (req, res) => {
   return res.status(200).json({
     message: "Welcome to LinkLy API",
@@ -25,31 +28,43 @@ app.get("/", (req, res) => {
   });
 });
 
+// ❗ __dirname fix for ES modules
 const __dirname = path.resolve();
 
+// 👉 CORS setup (VERY IMPORTANT for frontend connection)
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // allow frontend
+    credentials: true, // allow cookies
+  }),
 );
-app.use(express.json());
-app.use(cookieParser());
 
-// Import all routes
+// 👉 Middleware
+app.use(express.json()); // parse JSON request body
+app.use(cookieParser()); // read cookies from browser
+
+// 👉 API Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/message", messageRoute);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist")));
+/*
+❌ REMOVE THIS (you already did correctly)
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
-  });
-}
+This was used when frontend + backend were together.
+Now frontend is on Vercel, so this will cause error:
 
+Error: client/dist/index.html not found
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+});
+*/
+
+// 👉 Start server
 server.listen(PORT, () => {
-  console.log(`server is running on post ${PORT}`);
-  connectDB();
+  console.log(`server is running on port ${PORT}`);
+  connectDB(); // connect to MongoDB
 });
