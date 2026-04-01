@@ -121,7 +121,7 @@ export const login = async (req, res) => {
           return post;
         }
         return null; // Return null if the post author does not match the user
-      })
+      }),
     );
 
     // Prepare user data without password
@@ -145,7 +145,8 @@ export const login = async (req, res) => {
     return res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
+        secure: true, // Set to true in production (requires HTTPS)
+        sameSite: "none", // Allow cross-site cookies (required for secure cookies)
         maxAge: 6 * 24 * 60 * 60 * 1000, // 6 days
       })
       .status(200)
@@ -340,11 +341,11 @@ export const followOrUnfollowUser = async (req, res) => {
       await Promise.all([
         User.updateOne(
           { _id: currentUserId },
-          { $pull: { following: followingUserId } }
+          { $pull: { following: followingUserId } },
         ),
         User.updateOne(
           { _id: followingUserId },
-          { $pull: { followers: currentUserId } }
+          { $pull: { followers: currentUserId } },
         ),
       ]);
       return res.status(200).json({
@@ -356,11 +357,11 @@ export const followOrUnfollowUser = async (req, res) => {
       await Promise.all([
         User.updateOne(
           { _id: currentUserId },
-          { $push: { following: followingUserId } }
+          { $push: { following: followingUserId } },
         ),
         User.updateOne(
           { _id: followingUserId },
-          { $push: { followers: currentUserId } }
+          { $push: { followers: currentUserId } },
         ),
       ]);
 
