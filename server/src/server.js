@@ -32,10 +32,20 @@ app.get("/", (req, res) => {
 const __dirname = path.resolve();
 
 // 👉 CORS setup (VERY IMPORTANT for frontend connection)
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_URL || "http://localhost:5173", // allow frontend
+//     credentials: true, // allow cookies
+//   }),
+// );
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // allow frontend
-    credentials: true, // allow cookies
+    origin: [
+      "http://localhost:5173", // dev
+      process.env.CLIENT_URL, // production
+    ],
+    credentials: true,
   }),
 );
 
