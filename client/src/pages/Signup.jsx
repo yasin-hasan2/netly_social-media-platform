@@ -12,7 +12,8 @@ import { motion } from "framer-motion";
 export default function Signup() {
   const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState(null);
-  console.log("users", allUsers, "error", error);
+  // console.log("allUsers in Signup component", allUsers);
+  console.log("error in Signup component", error);
   const [input, setInput] = useState({
     username: "",
     email: "",
