@@ -1,11 +1,13 @@
 import axios from "axios";
 
-const BASE_URL =
-  import.meta.env.MODE === "development"
-    ? "https://netly-social-media-platform.onrender.com/api/v1"
-    : "/api/V1";
+// const BASE_URL =
+//   import.meta.env.MODE === "development"
+//     ? "https://netly-social-media-platform.onrender.com/api/v1"
+//     : "/api/V1";
 
 export const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "https://netly-social-media-platform.onrender.com/api/v1",
   withCredentials: true,
 });
