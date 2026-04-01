@@ -1,7 +1,7 @@
 # 🌐 Netly Social Media Platform
 
 A **full-stack social media platform** built with the **MERN stack** where users can connect, share posts, follow/unfollow others, and chat in real time.  
-Deployed on **Render** → [Live Demo](https://netly-social-media-platform-1.onrender.com/) 🚀
+Deployed on **Render** → [Live Demo](https://netly-social-media-platform.vercel.app) 🚀
 
 ---
 
