@@ -37,6 +37,21 @@ const userSchema = new mongoose.Schema(
       select: false, // Exclude password from queries by default
       // This means that when you query for users, the password field will not be returned unless explicitly requested
     },
+    profileType: {
+      type: String,
+      enum: ["personal", "business"],
+      default: "personal",
+    },
+    profilePrivacy: {
+      type: String,
+      enum: ["public", "private"],
+      default: "public",
+    },
+    accountStatus: {
+      type: String,
+      enum: ["verified", "unverified", "suspended"],
+      default: "unverified",
+    },
     profilePicture: {
       type: String,
       default: "https://example.com/default-profile-picture.png", // Default profile picture URL

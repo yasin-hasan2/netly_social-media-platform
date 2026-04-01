@@ -23,11 +23,11 @@ const useFollowHandler = (targetUserId) => {
     if (!user) return toast.error("You must be logged in");
 
     try {
-      const action = following ? "unfollow" : "follow";
-
       const res = await axiosInstance.post(
         `/user/followorunfollow/${targetUserId}`,
-        {},
+        {
+          userId: user._id,
+        },
         { withCredentials: true }
       );
 

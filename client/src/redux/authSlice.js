@@ -39,6 +39,19 @@ const authSlice = createSlice({
         // follow
         state.userProfile.followers.push(currentUserId);
       }
+
+      // Also keep the authenticated user's following list in sync for UI elsewhere
+      if (state.user) {
+        if (!Array.isArray(state.user.following)) state.user.following = [];
+        const idx = state.user.following.indexOf(targetUserId);
+        if (idx > -1) {
+          state.user.following = state.user.following.filter(
+            (id) => id !== targetUserId
+          );
+        } else {
+          state.user.following.push(targetUserId);
+        }
+      }
     },
   },
 });

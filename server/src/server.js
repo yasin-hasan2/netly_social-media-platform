@@ -18,12 +18,12 @@ import { app, server } from "./socket/socket.js"; // now we use the app from soc
 
 const PORT = process.env.PORT;
 
-// app.get("/", (req, res) => {
-//   return res.status(200).json({
-//     message: "Welcome to LinkLy API",
-//     status: "success",
-//   });
-// });
+app.get("/", (req, res) => {
+  return res.status(200).json({
+    message: "Welcome to LinkLy API",
+    status: "success",
+  });
+});
 
 const __dirname = path.resolve();
 
