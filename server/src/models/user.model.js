@@ -39,8 +39,23 @@ const userSchema = new mongoose.Schema(
     },
     profileType: {
       type: String,
-      enum: ["personal", "business"],
+      enum: ["personal", "creator", "business"],
       default: "personal",
+    },
+    category: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    location: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    websiteLink: {
+      type: String,
+      default: "",
+      trim: true,
     },
     profilePrivacy: {
       type: String,
@@ -51,6 +66,23 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["verified", "unverified", "suspended"],
       default: "unverified",
+    },
+    isBlueTag: {
+      type: Boolean,
+      default: false,
+    },
+    blueTagGivenBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    blueTagGivenAt: {
+      type: Date,
+      default: null,
+    },
+    canManageBlueTag: {
+      type: Boolean,
+      default: false,
     },
     profilePicture: {
       type: String,
@@ -66,7 +98,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female"],
+      default: "",
     },
     dateOfBirth: {
       type: Date, // Store date of birth as a Date object
@@ -74,46 +106,55 @@ const userSchema = new mongoose.Schema(
     },
     relationshipStatus: {
       type: String,
-      enum: ["single", "in a relationship", "married", "divorced", "widowed"],
       default: "single", // Default relationship status
     },
     contactInfo: {
       phone: {
         type: String,
         default: "",
-        trim: true, // Removes leading and trailing whitespace
+        trim: true,
       },
       email: {
         type: String,
         default: "",
-        trim: true, // Removes leading and trailing whitespace
+        trim: true,
       },
       socialLinks: {
         facebook: {
           type: String,
           default: "",
-          trim: true, // Removes leading and trailing whitespace
+          trim: true,
         },
         twitter: {
           type: String,
           default: "",
-          trim: true, // Removes leading and trailing whitespace
+          trim: true,
         },
         instagram: {
           type: String,
           default: "",
-          trim: true, // Removes leading and trailing whitespace
+          trim: true,
         },
         linkedin: {
           type: String,
           default: "",
-          trim: true, // Removes leading and trailing whitespace
+          trim: true,
+        },
+        github: {
+          type: String,
+          default: "",
+          trim: true,
+        },
+        youtube: {
+          type: String,
+          default: "",
+          trim: true,
         },
       },
       websiteLink: {
         type: String,
         default: "",
-        trim: true, // Removes leading and trailing whitespace
+        trim: true,
       },
     },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
@@ -123,8 +164,42 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["user", "professional"],
+      enum: ["user", "admin", "super_admin", "professional"],
       default: "user",
+    },
+
+    messagingOptions: {
+      canSendMessages: {
+        type: Boolean,
+        default: true,
+      },
+      messagingStatus: {
+        type: String,
+        enum: ["active", "restricted", "disabled"],
+        default: "active",
+      },
+      messagePermission: {
+        type: String,
+        enum: ["everyone", "followers_only", "no_one"],
+        default: "everyone",
+      },
+      restrictionReason: {
+        type: String,
+        default: "",
+      },
+    },
+
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordCode: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

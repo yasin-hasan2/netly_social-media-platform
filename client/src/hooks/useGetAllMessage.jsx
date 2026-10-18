@@ -6,25 +6,23 @@ import { useDispatch, useSelector } from "react-redux";
 const useGetAllMessage = () => {
   const dispatch = useDispatch();
   const { selectedUser } = useSelector((state) => state.chat);
-  //   console.log("selectedUser:", selectedUser?._id);
 
   useEffect(() => {
+    if (!selectedUser?._id) return;
     const fetchAllMessage = async () => {
       try {
         const res = await axiosInstance.get(
-          `/message/all/${selectedUser?._id}`,
+          `/message/all/${selectedUser._id}`,
           { withCredentials: true }
         );
-        // console.log(res.data);
-        if (res.data.success) {
+        if (res.data?.success && res.data.messages) {
           dispatch(setMessages(res.data.messages));
-          //   console.log("All messages fetched successfully:", res.data.messages);
         }
       } catch (error) {
         console.log("error from useGetAllMessage hook", error);
       }
     };
     fetchAllMessage();
-  }, [selectedUser, dispatch]);
+  }, [selectedUser?._id, dispatch]);
 };
 export default useGetAllMessage;

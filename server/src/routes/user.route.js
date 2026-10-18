@@ -3,13 +3,19 @@ import {
   editProfile,
   followOrUnfollowUser,
   getAllUsers,
+  getFollowers,
+  getFollowing,
   getProfile,
   getSuggestedUsers,
   login,
   logout,
   registerUser,
+  toggleProfilePrivacy,
+  forgotPassword,
+  verifyResetToken,
+  resetPassword,
 } from "../controllers/user.controller.js";
-import isAuthenticated from "../middlewares/isAuthenticated.js";
+import isAuthenticated, { optionalAuth } from "../middlewares/isAuthenticated.js";
 import upload from "../middlewares/multer.js";
 
 const router = express.Router();
@@ -17,11 +23,20 @@ const router = express.Router();
 router.route("/register").post(registerUser);
 router.route("/login").post(login);
 router.route("/logout").get(logout);
-router.route("/:id/profile").get(isAuthenticated, getProfile);
+
+// Password Reset Routes
+router.route("/forgot-password").post(forgotPassword);
+router.route("/verify-reset-token").get(verifyResetToken);
+router.route("/reset-password").post(resetPassword);
+
+router.route("/:id/profile").get(optionalAuth, getProfile);
 router
   .route("/profile/edit")
   .post(isAuthenticated, upload.single("profilePhoto"), editProfile);
-router.route("/suggested").get(isAuthenticated, getSuggestedUsers);
+router.route("/profile/toggle-privacy").post(isAuthenticated, toggleProfilePrivacy);
+router.route("/suggested").get(optionalAuth, getSuggestedUsers);
+router.route("/:id/followers").get(optionalAuth, getFollowers);
+router.route("/:id/following").get(optionalAuth, getFollowing);
 router
   .route("/followorunfollow/:id")
   .post(isAuthenticated, followOrUnfollowUser);

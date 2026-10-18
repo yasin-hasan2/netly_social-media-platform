@@ -21,8 +21,9 @@ import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
   key: "root",
-  version: 1,
+  version: 3,
   storage,
+  blacklist: ["socketIo", "chat"],
 };
 
 const rootReducer = combineReducers({
@@ -42,7 +43,16 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        ignoredActions: [
+          FLUSH,
+          REHYDRATE,
+          PAUSE,
+          PERSIST,
+          PURGE,
+          REGISTER,
+          "socketIo/setSocket",
+        ],
+        ignoredPaths: ["socketIo.socket"],
       },
     }),
 });

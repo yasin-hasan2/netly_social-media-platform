@@ -1,0 +1,7 @@
+{
+  "name": "Net-ly",
+  "description": "A modern social media platform for sharing posts, following creators, and real-time chatting.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

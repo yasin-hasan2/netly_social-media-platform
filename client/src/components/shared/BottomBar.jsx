@@ -8,9 +8,10 @@ import {
   Settings,
   LogOut,
   MenuIcon,
+  Film,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CreatePost from "./CreatePost";
 import { axiosInstance } from "@/lib/axios";
@@ -22,6 +23,7 @@ export default function BottomBar() {
   const [open, setOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { user } = useSelector((store) => store.auth);
+  const { unreadMessagesCount = 0 } = useSelector((store) => store.realTimeNotification);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -48,35 +50,63 @@ export default function BottomBar() {
     }
   };
 
+  const location = useLocation();
+  const isReels = location.pathname === "/reels";
+
   return (
     <div className="relative">
       {/* Bottom Nav */}
-      <div className="flex justify-around items-center py-2 backdrop-blur-md bg-white/30 shadow-lg rounded-t-2xl">
-        {/* Open CreatePost Dialog */}
-        <PlusSquare
-          className="w-6 h-6 cursor-pointer"
-          onClick={() => setOpen(true)}
-        />
-
-        <Link to={`/profile/${user?._id}`}>
-          <User className="w-6 h-6 cursor-pointer" />
+      <div className="flex justify-around items-center py-2 backdrop-blur-md bg-zinc-950/80 border-t border-zinc-800 shadow-lg rounded-t-2xl">
+        {/* Home */}
+        <Link
+          to={"/"}
+          onClick={handleHomeClick}
+          className="p-2 text-zinc-400 hover:text-[#FACD25] transition"
+        >
+          <Home className={`w-6 h-6 cursor-pointer ${location.pathname === "/" ? "text-[#FACD25]" : ""}`} />
         </Link>
 
-        {/* Bigger Home */}
-        <button onClick={handleHomeClick}>
-          <Link to={"/"}>
-            <Home className="w-10 h-10 cursor-pointer text-[#FACD25]" />
-          </Link>
+        {/* Reels */}
+        <Link
+          to={"/reels"}
+          className={`p-2 transition ${isReels ? "text-[#FACD25]" : "text-zinc-400 hover:text-[#FACD25]"}`}
+          title="Reels"
+        >
+          <Film className="w-6 h-6 cursor-pointer" />
+        </Link>
+
+        {/* Open CreatePost Dialog */}
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="p-2 text-zinc-400 hover:text-white transition cursor-pointer"
+          title="Create Post or Reel"
+        >
+          <PlusSquare className="w-6 h-6 cursor-pointer" />
         </button>
 
-        <Link to={"/chat"}>
-          <MessageCircle className="w-6 h-6 cursor-pointer" />
+        {/* Messages */}
+        <Link to={"/chat"} className="p-2 text-zinc-400 hover:text-[#FACD25] transition relative">
+          <MessageCircle className={`w-6 h-6 cursor-pointer ${location.pathname.startsWith("/chat") ? "text-[#FACD25]" : ""}`} />
+          {unreadMessagesCount > 0 && (
+            <span className="absolute top-1 right-1 text-[9px] font-black bg-[#FACE25] text-zinc-950 rounded-full min-w-4 h-4 px-1 flex items-center justify-center shadow-md animate-pulse">
+              {unreadMessagesCount}
+            </span>
+          )}
         </Link>
 
-        <MenuIcon
-          className="w-6 h-6 cursor-pointer"
+        {/* Profile */}
+        <Link to={`/profile/${user?._id}`} className="p-2 text-zinc-400 hover:text-[#FACD25] transition">
+          <User className={`w-6 h-6 cursor-pointer ${location.pathname.startsWith("/profile") ? "text-[#FACD25]" : ""}`} />
+        </Link>
+
+        <button
+          type="button"
           onClick={() => setShowProfileMenu(!showProfileMenu)}
-        />
+          className="p-2 text-zinc-400 hover:text-white transition cursor-pointer"
+        >
+          <MenuIcon className="w-6 h-6 cursor-pointer" />
+        </button>
       </div>
 
       {/* Profile popup */}

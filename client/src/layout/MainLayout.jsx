@@ -1,96 +1,72 @@
-import Particles from "@/components/animated/Particles";
 import BottomBar from "@/components/shared/BottomBar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import TopBar from "@/components/shared/TopBar";
-import { Outlet, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import StartupLoader from "@/components/animated/StartupLoader";
+import { Outlet, useLocation, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Shield, Crown } from "lucide-react";
 
 export default function MainLayout() {
-  const [searchResults, setSearchResults] = useState([]);
-  const [loading, setLoading] = useState(true); // loader state
   const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  const SUPER_ADMIN_EMAILS = [
+    "yasinalhasan@gmail.com",
+    "yaseenalhassan2@gmail.com",
+  ];
+  const email = (user?.email || "").toLowerCase();
+  const isSuper = SUPER_ADMIN_EMAILS.includes(email) || user?.role === "super_admin";
+  const hasAdminAccess = user?.role === "admin" || isSuper;
 
   // detect chat page
   const isChatPage = location.pathname.startsWith("/chat");
 
-  // Simulate startup loading (replace with actual API fetch if needed)
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000); // 2 seconds
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Scroll to top after loader finishes
-  useEffect(() => {
-    if (!loading) {
-      window.scrollTo(0, 0);
-    }
-  }, [loading]);
-
-  if (loading) return <StartupLoader />; // show loader first
-
   return (
-    <div className="relative w-full h-full">
-      {/* Background Particles */}
+    <div className="relative min-h-screen w-full bg-[#0A0D14] text-zinc-100 antialiased overflow-x-hidden">
+      {/* Subtle modern ambient background gradient */}
       <div
+        className="fixed inset-0 pointer-events-none z-0 opacity-30"
         style={{
-          width: "100%",
-          height: "100%",
-          position: "fixed",
-          zIndex: -20,
+          backgroundImage:
+            "radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.04), transparent 45%), radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.02), transparent 50%)",
         }}
-      >
-        <Particles
-          particleColors={["#FACE25", "#ffffff"]}
-          particleCount={200}
-          particleSpread={10}
-          speed={0.1}
-          particleBaseSize={100}
-          alphaParticles={false}
-          disableRotation={false}
-        />
-      </div>
+      />
 
-      <div className="flex">
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block">
+      <div className="relative z-10 flex min-h-screen">
+        {/* Desktop Left Sidebar (Clean fixed width 256px) */}
+        <div className="hidden md:block w-64 flex-shrink-0">
           <LeftSidebar />
         </div>
 
-        {/* Main content */}
-        <div className="flex-1 md:ml-[16%] relative">
-          {/* Mobile TopBar (hidden on chat page) */}
-          {!isChatPage && (
-            <div className="md:hidden fixed top-0 left-0 right-0 z-50">
-              <TopBar onSearchResults={setSearchResults} />
-            </div>
-          )}
+        {/* Main content column */}
+        <div className="flex-1 md:ml-64 relative min-h-screen flex flex-col w-full min-w-0">
+          {/* Global Navigation Header (Desktop & Mobile, hidden on full-screen chat) */}
+          {!isChatPage && <TopBar />}
 
-          {/* Global search dropdown for mobile */}
-          {!isChatPage && searchResults.length > 0 && (
-            <div className="md:hidden absolute top-14 left-1/2 transform -translate-x-1/2 w-[90%] max-w-xl max-h-96 overflow-y-auto backdrop-blur-md bg-white/30 shadow-lg rounded-md z-50">
-              {searchResults.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-none"
-                >
-                  {"username" in item
-                    ? `User: ${item.username}`
-                    : `Post: ${item.caption.slice(0, 50)}...`}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className={`${!isChatPage ? "pt-12 md:pt-0" : ""}`}>
+          <main className="flex-1 pb-20 md:pb-8 w-full min-w-0">
             <Outlet />
-          </div>
+          </main>
 
-          {/* Mobile BottomBar (hidden on chat page) */}
+          {/* Mobile Bottom Navigation Bar */}
           {!isChatPage && (
             <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
               <BottomBar />
             </div>
+          )}
+
+          {/* Privileged Floating Admin Button (Only visible to admin / super admin) */}
+          {hasAdminAccess && (
+            <Link
+              to="/admin-portal"
+              className="fixed bottom-20 md:bottom-6 right-5 z-40 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/90 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-white/10 shadow-xl backdrop-blur-md transition-all hover:scale-105 text-xs font-medium cursor-pointer"
+              title="Open Admin Control Portal"
+            >
+              {isSuper ? (
+                <Crown className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Shield className="w-3.5 h-3.5 text-sky-400" />
+              )}
+              <span>{isSuper ? "Super Admin" : "Admin"}</span>
+            </Link>
           )}
         </div>
       </div>

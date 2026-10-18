@@ -17,6 +17,23 @@ const messageSchema = new mongoose.Schema(
       required: true, // Ensure that every message has content
       trim: true, // Removes leading and trailing whitespace
     },
+    reactions: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        emoji: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+    replyTo: {
+      messageId: { type: String },
+      content: { type: String },
+      senderUsername: { type: String },
+    },
     timestamp: {
       type: Date,
       default: Date.now, // Automatically set the timestamp to the current date and time

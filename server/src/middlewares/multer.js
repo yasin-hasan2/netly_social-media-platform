@@ -2,8 +2,19 @@ import multer from "multer";
 
 const upload = multer({
   storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 40 * 1024 * 1024, // 40MB limit for video/image upload
+  },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype.startsWith("image/") ||
+      file.mimetype.startsWith("video/")
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image and video files are supported"), false);
+    }
+  },
 });
 
 export default upload;
-// This middleware uses multer to handle file uploads in memory.
-// It can be used in routes to handle file uploads, such as profile pictures or other media.

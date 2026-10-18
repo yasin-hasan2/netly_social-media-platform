@@ -56,7 +56,7 @@ export default function Signup() {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get("user/allUsers", {
+        const res = await axiosInstance.get("/user/allUsers", {
           withCredentials: true,
         });
         setAllUsers(res.data.users || []);

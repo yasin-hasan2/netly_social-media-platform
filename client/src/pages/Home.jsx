@@ -1,5 +1,4 @@
 import Feed from "@/components/shared/Feed";
-import Footer from "@/components/shared/Footer";
 import RightSidebar from "@/components/shared/RightSidebar";
 import useGetAllPost from "@/hooks/useGetAllPost";
 import useGetSuggestedUsers from "@/hooks/userGetSuggestedUsers";
@@ -10,24 +9,19 @@ export default function Home() {
   useGetSuggestedUsers();
 
   return (
-    <div className="flex justify-center w-full px-2 md:px-6 relative ">
-      {/* Main Feed */}
-      <div className="w-full md:w-[60%] lg:w-[55%] xl:w-[50%]   ">
-        <div className="">
-          <Feed />
-          <Outlet />
-        </div>
+    <div className="flex justify-center w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6 py-4 md:py-6 gap-8">
+      {/* Main Center Feed */}
+      <div className="w-full max-w-[620px] flex-1">
+        <Feed />
+        <Outlet />
       </div>
 
-      {/* Right Sidebar - hidden on small screens */}
-      <div className="hidden md:block w-[35%] lg:w-[30%] xl:w-[25%] pl-6  ">
-        <div className="sticky top-4">
+      {/* Right Sidebar (Desktop only) */}
+      <aside className="hidden lg:block w-80 flex-shrink-0">
+        <div className="sticky top-20">
           <RightSidebar />
-          {/* <div>
-            <Footer />
-          </div> */}
         </div>
-      </div>
+      </aside>
     </div>
   );
 }

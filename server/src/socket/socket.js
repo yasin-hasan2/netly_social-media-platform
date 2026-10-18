@@ -8,8 +8,9 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -27,6 +28,30 @@ io.on("connection", (socket) => {
   }
 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  // Real-time typing indicators
+  socket.on("typing", (data) => {
+    const receiverId = data?.receiverId;
+    if (!receiverId) return;
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("userTyping", {
+        senderId: userId || data?.senderId,
+        username: data?.username,
+      });
+    }
+  });
+
+  socket.on("stopTyping", (data) => {
+    const receiverId = data?.receiverId;
+    if (!receiverId) return;
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("userStoppedTyping", {
+        senderId: userId || data?.senderId,
+      });
+    }
+  });
 
   socket.on("disconnect", () => {
     if (userId) {

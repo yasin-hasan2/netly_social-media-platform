@@ -1,13 +1,19 @@
 {
-  "name": "linkly_social-media-platform",
+  "name": "net-ly",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
-    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
-    "start": "npm run start --prefix server"
+    "dev": "node server/src/server.js",
+    "build": "npm --prefix client run build",
+    "lint": "npm --prefix client run lint",
+    "start": "node server/src/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "Net-ly social media platform"
 }

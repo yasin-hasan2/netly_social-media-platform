@@ -5,18 +5,17 @@ const postSchema = new mongoose.Schema(
     caption: {
       type: String,
       default: "",
-      required: true,
       trim: true, // Removes leading and trailing whitespace
     },
     image: {
       type: String,
-      required: true,
-      trim: true, // Removes leading and trailing whitespace
+      default: "",
+      trim: true,
     },
     video: {
       type: String,
       default: "",
-      trim: true, // Removes leading and trailing whitespace
+      trim: true,
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
@@ -38,12 +37,46 @@ const postSchema = new mongoose.Schema(
     tags: [
       {
         type: String,
-        trim: true, // Removes leading and trailing whitespace
+        trim: true,
       },
     ],
     location: {
       type: String,
-      trim: true, // Removes leading and trailing whitespace
+      default: "",
+      trim: true,
+    },
+    feeling: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    postType: {
+      type: String,
+      enum: ["post", "reel"],
+      default: "post",
+    },
+    reposts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    originalPost: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+      default: null,
+    },
+    sharesCount: {
+      type: Number,
+      default: 0,
+    },
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
+    editedAt: {
+      type: Date,
+      default: null,
     },
   },
   {

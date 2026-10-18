@@ -1,13 +1,23 @@
 import axios from "axios";
 
-// const BASE_URL =
-//   import.meta.env.MODE === "development"
-//     ? "https://netly-social-media-platform.onrender.com/api/v1"
-//     : "/api/V1";
-
+// Always use same-origin relative API path in AI Studio fullstack app
 export const axiosInstance = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    "https://netly-social-media-platform.onrender.com/api/v1",
+  baseURL: "/api/v1",
   withCredentials: true,
 });
+
+// Automatically attach Bearer token to all outgoing requests
+axiosInstance.interceptors.request.use(
+  (config) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch {
+      // Ignore localStorage access restrictions if any
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
